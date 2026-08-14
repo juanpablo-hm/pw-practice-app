@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:4200/')
+    await page.goto('/')
 })
 
 test.describe('Form Layouts page', () => {
@@ -80,7 +80,7 @@ test('Lists and dropdowns', async ({ page }) => {
     await dropDownMenu.click()
     for (const color in colors) {
         await optionList.filter({ hasText: color }).click()
-        await expect(header).toHaveCSS('background-color', colors[color])
+        await expect(header).toHaveCSS('background-color', colors[color as keyof typeof colors])
         if (color != "Corporate")
             await dropDownMenu.click()
     }
@@ -153,5 +153,33 @@ test('Web Tables', async ({ page }) => {
             }
         }
     }
+})
+
+test('Date Picker', async ({page}) => {
+    await page.getByText('Forms').click()
+    await page.getByText('Datepicker').click()
+
+    const calendarInputField = page.getByPlaceholder('Form Picker')
+    await calendarInputField.click()
+
+    const date = new Date()
+    date.setDate(date.getDate() + 100)
+
+    const expectedDay = date.getDate().toString()
+    const expectedMonth = date.toLocaleString('En-US', {month: 'short'})
+    const expectedMonthLong = date.toLocaleString('En-US', {month: 'long'})
+    const expectedYear = date.getFullYear()
+    const expectedDate = `${expectedMonth} ${expectedDay}, ${expectedYear}`
+
+    let currentMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
+    const expectedMonthAndYear = `${expectedMonthLong} ${expectedYear}`
+
+    while(!currentMonthAndYear?.includes(expectedMonthAndYear)){
+        await page.locator('.next-month').click()
+        currentMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
+    }
+
+    await page.locator('.day-cell:not(.bounding-month)').getByText(expectedDay, {exact: true}).click()
+    await expect(calendarInputField).toHaveValue(expectedDate)
 })
 
