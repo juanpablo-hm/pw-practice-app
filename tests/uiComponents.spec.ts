@@ -232,5 +232,3 @@ test('Drag & Drop', async({page}) => {
     await page.locator('#drop-list').hover()
     await page.mouse.up()
 })
-
-
