@@ -1,15 +1,13 @@
 import { Page } from "@playwright/test";
 import { step } from "../helpers/test-step-decorator";
+import { HelperBase } from "./helper-base";
 
+export class FormLayoutsPage extends HelperBase {
 
-export class FormLayoutsPage {
-
-    private readonly page: Page
-
-    constructor(page: Page){
-        this.page = page
+    constructor(page: Page) {
+        super(page)
     }
- 
+
     @step
     async submitUsingTheGridForm(email: string, password: string, optionText: string){
         const usingTheGridForm = this.page.locator('nb-card', { hasText: "Using the Grid" })
