@@ -4,13 +4,18 @@ test.beforeEach(async ({ page }) => {
     await page.goto('/')
 })
 
-test.only('Form Layouts page', () => {
+test.describe('Form Layouts page', () => {
+    test.describe.configure({retries:2})
+
     test.beforeEach(async ({ page }) => {
         await page.getByText('Forms').click()
         await page.getByText('Form Layouts').click()
     })
 
-    test('Input Fields', async ({ page }) => {
+    test('Input Fields', async ({ page }, testInfo) => {
+        if(testInfo.retry){
+            //clean test data
+        }
         const usingTheGridEmailInput = page.locator('nb-card', { hasText: "Using the Grid" })
             .getByRole('textbox', { name: "Email" })
 
@@ -155,7 +160,7 @@ test('Web Tables', async ({ page }) => {
     }
 })
 
-test('Date Picker', async ({page}) => {
+test('Date Picker', async ({ page }) => {
     await page.getByText('Forms').click()
     await page.getByText('Datepicker').click()
 
@@ -166,60 +171,60 @@ test('Date Picker', async ({page}) => {
     date.setDate(date.getDate() + 100)
 
     const expectedDay = date.getDate().toString()
-    const expectedMonth = date.toLocaleString('En-US', {month: 'short'})
-    const expectedMonthLong = date.toLocaleString('En-US', {month: 'long'})
+    const expectedMonth = date.toLocaleString('En-US', { month: 'short' })
+    const expectedMonthLong = date.toLocaleString('En-US', { month: 'long' })
     const expectedYear = date.getFullYear()
     const expectedDate = `${expectedMonth} ${expectedDay}, ${expectedYear}`
 
     let currentMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
     const expectedMonthAndYear = `${expectedMonthLong} ${expectedYear}`
 
-    while(!currentMonthAndYear?.includes(expectedMonthAndYear)){
+    while (!currentMonthAndYear?.includes(expectedMonthAndYear)) {
         await page.locator('.next-month').click()
         currentMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
     }
 
-    await page.locator('.day-cell:not(.bounding-month)').getByText(expectedDay, {exact: true}).click()
+    await page.locator('.day-cell:not(.bounding-month)').getByText(expectedDay, { exact: true }).click()
     await expect(calendarInputField).toHaveValue(expectedDate)
 })
 
-test('Sliders', async ({page}) => {
+test('Sliders', async ({ page }) => {
     //1. Setting the attribute values
- //   const tempGauge = page.locator('[tabtitle="Temperature"] circle')
-   // await tempGauge.evaluate( element => {
-     //   element.setAttribute('cx', '232.630')
-       // element.setAttribute('cy', '232.630')
-  //  })
-   // await tempGauge.click()
+    //   const tempGauge = page.locator('[tabtitle="Temperature"] circle')
+    // await tempGauge.evaluate( element => {
+    //   element.setAttribute('cx', '232.630')
+    // element.setAttribute('cy', '232.630')
+    //  })
+    // await tempGauge.click()
 
     //2.  Mouse Movement
-     const tempBox = page.locator('[tabtitle="Temperature"] ngx-temperature-dragger')
-     await tempBox.scrollIntoViewIfNeeded()  
+    const tempBox = page.locator('[tabtitle="Temperature"] ngx-temperature-dragger')
+    await tempBox.scrollIntoViewIfNeeded()
 
-     const box = await tempBox.boundingBox()
-     const x = box?.x + box?.width / 2
-     const y = box?.y + box?.height / 2
+    const box = await tempBox.boundingBox()
+    const x = box?.x + box?.width / 2
+    const y = box?.y + box?.height / 2
 
-     await page.mouse.move(x, y)
-     await page.mouse.down()
-     await page.mouse.move(x + 100, y)
-     await page.mouse.move(x+100, y + 100)
-     await page.mouse.up()
+    await page.mouse.move(x, y)
+    await page.mouse.down()
+    await page.mouse.move(x + 100, y)
+    await page.mouse.move(x + 100, y + 100)
+    await page.mouse.up()
 
-     await expect(tempBox).toContainText('30')
+    await expect(tempBox).toContainText('30')
 })
 
-test('iFrames', async ({page}) => {
+test('iFrames', async ({ page }) => {
     await page.getByText('Modal & Overlays').click()
     await page.getByText('Dialog').click()
 
     const frameLocator = page.frameLocator('data-cy="esc-close-iframe"')
 
-    await frameLocator.getByRole('button', {name: 'Open Dialog with esc close'}).click()
- 
-}) 
+    await frameLocator.getByRole('button', { name: 'Open Dialog with esc close' }).click()
 
-test('Drag & Drop', async({page}) => {
+})
+
+test('Drag & Drop', async ({ page }) => {
     await page.getByText('Extra Components').click()
     await page.getByText('Drag & Drop').click()
 
