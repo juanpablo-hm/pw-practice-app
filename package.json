@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "po-test-chromium": "npx playwright test test-with-page-objects.spec.ts --project=chromium",
+    "po-test-chromium:qa": "TEST_ENV=qa npx playwright test test-with-page-objects.spec.ts --project=chromium",
     "po-test-firefox": "npx playwright test test-with-page-objects.spec.ts --project=firefox",
     "po-test-all": "npm run po-test-firefox && npm run po-test-firefox",
     "test": "playwright test",
@@ -16,5 +17,8 @@
     "@playwright/test": "^1.53.2",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.10"
   }
 }

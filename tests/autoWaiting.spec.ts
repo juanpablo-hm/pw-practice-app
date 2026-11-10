@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.beforeEach(async ({ page }, testInfo) => {
-    await page.goto('https://playground.bondaracademy.com/')
+    await page.goto('/')
     await page.getByText('Modal & Overlays').click()
     await page.getByText('Dialog').click()
     testInfo.setTimeout(testInfo.timeout + 3000)
@@ -12,7 +12,7 @@ test('Auto waiting', async ({ page }) => {
     await dialogWithDelayForm.getByRole('button', { name: '3 seconds' }).click()
 
     const dialogContainer = page.locator('nb-dialog-container')
-    //await dialogContainer.getByRole('button', {name: 'Ok'}).click()
+    await dialogContainer.getByRole('button', {name: 'Ok'}).click()
 
     const dialogHeaderText = await dialogContainer.locator('nb-card-header').textContent()
     //const dialogHeaderText = await dialogContainer.locator('nb-card-header').allTextContents()
